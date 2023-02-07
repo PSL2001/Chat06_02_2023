@@ -88,7 +88,7 @@ class ChatActivity : AppCompatActivity() {
     private fun setRecycler() {
         val layoutManager = LinearLayoutManager(this)
         binding.recChat.layoutManager = layoutManager
-        adapter = MensajesAdapter(lista)
+        adapter = MensajesAdapter(lista, email)
         binding.recChat.adapter = adapter
 
     }

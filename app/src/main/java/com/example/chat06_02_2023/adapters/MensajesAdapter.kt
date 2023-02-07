@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.chat06_02_2023.R
 import com.example.chat06_02_2023.models.Mensajes
 
-class MensajesAdapter(var lista: ArrayList<Mensajes>): RecyclerView.Adapter<MensajesViewHolder>() {
+class MensajesAdapter(var lista: ArrayList<Mensajes>, val email: String): RecyclerView.Adapter<MensajesViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MensajesViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.mensaje_layout, parent, false)
         return MensajesViewHolder(v)
@@ -17,6 +17,6 @@ class MensajesAdapter(var lista: ArrayList<Mensajes>): RecyclerView.Adapter<Mens
     }
 
     override fun onBindViewHolder(holder: MensajesViewHolder, position: Int) {
-        holder.render(lista[position])
+        holder.render(lista[position], email)
     }
 }
