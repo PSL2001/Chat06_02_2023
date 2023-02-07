@@ -1,16 +1,22 @@
 package com.example.chat06_02_2023
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Adapter
+import android.view.View
+import android.view.inputmethod.InputMethodManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chat06_02_2023.adapters.MensajesAdapter
 import com.example.chat06_02_2023.databinding.ActivityChatBinding
-import com.example.chat06_02_2023.prefs.Mensajes
+import com.example.chat06_02_2023.models.Mensajes
 import com.example.chat06_02_2023.prefs.Prefs
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 class ChatActivity : AppCompatActivity() {
     lateinit var binding: ActivityChatBinding
@@ -26,15 +32,64 @@ class ChatActivity : AppCompatActivity() {
         prefs = Prefs(this)
         setContentView(binding.root)
         email = prefs.getEmail().toString()
+        db = FirebaseDatabase.getInstance("https://proyecto-chat060223-default-rtdb.europe-west1.firebasedatabase.app/")
         setRecycler()
+        traerMensajes()
         setListeners()
     }
 
+    private fun traerMensajes() {
+        db.getReference("chat").addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                lista.clear()
+                if (snapshot.exists()) {
+                    for (item in snapshot.children) {
+                        var mensaje = item.getValue(Mensajes::class.java)
+                        if (mensaje != null) {
+                            lista.add(mensaje)
+                        }
+                    }
+                    lista.sortBy { mensaje -> mensaje.fecha }
+                    adapter.lista = lista
+                    adapter.notifyDataSetChanged()
+                    binding.recChat.scrollToPosition(lista.size - 1)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+        })
+    }
+
     private fun setListeners() {
+        binding.ivSend.setOnClickListener {
+            enviarMensaje()
+            it.ocultarTeclado()
+        }
+
+    }
+
+    private fun enviarMensaje() {
+        val texto = binding.teiChat.text.toString().trim()
+        if (texto.isEmpty()) return
+        val mensaje = Mensajes(texto = texto, email = email)
+        db.getReference("chat").child(mensaje.fecha.toString()).setValue(mensaje).addOnSuccessListener {
+            traerMensajes()
+            binding.teiChat.setText("")
+        }
+            .addOnFailureListener {
+
+            }
 
     }
 
     private fun setRecycler() {
+        val layoutManager = LinearLayoutManager(this)
+        binding.recChat.layoutManager = layoutManager
+        adapter = MensajesAdapter(lista)
+        binding.recChat.adapter = adapter
 
     }
 
@@ -55,5 +110,13 @@ class ChatActivity : AppCompatActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    /**
+     * Oculta el teclado, se activa cuando se hace click en el botón de enviar
+     */
+    private fun View.ocultarTeclado() {
+        val inputManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputManager.hideSoftInputFromWindow(windowToken, 0)
     }
 }

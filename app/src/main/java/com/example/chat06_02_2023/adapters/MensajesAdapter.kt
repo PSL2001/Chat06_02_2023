@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chat06_02_2023.R
-import com.example.chat06_02_2023.prefs.Mensajes
+import com.example.chat06_02_2023.models.Mensajes
 
 class MensajesAdapter(var lista: ArrayList<Mensajes>): RecyclerView.Adapter<MensajesViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MensajesViewHolder {

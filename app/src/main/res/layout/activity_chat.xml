@@ -32,7 +32,7 @@
                 android:id="@+id/tei_chat"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="hint" />
+                android:hint="Mensaje...." />
         </com.google.android.material.textfield.TextInputLayout>
 
         <ImageView
