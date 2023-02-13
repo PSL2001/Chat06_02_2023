@@ -1,6 +1,7 @@
 package com.example.chat06_02_2023
 
 import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
@@ -108,6 +109,9 @@ class ChatActivity : AppCompatActivity() {
             R.id.item_salir -> {
                 finishAffinity()
             }
+            R.id.item_perfil -> {
+                startActivity(Intent(this, PerfilActivity::class.java))
+            }
         }
         return super.onOptionsItemSelected(item)
     }
@@ -118,5 +122,10 @@ class ChatActivity : AppCompatActivity() {
     private fun View.ocultarTeclado() {
         val inputManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputManager.hideSoftInputFromWindow(windowToken, 0)
+    }
+
+    override fun onRestart() {
+        traerMensajes()
+        super.onRestart()
     }
 }
